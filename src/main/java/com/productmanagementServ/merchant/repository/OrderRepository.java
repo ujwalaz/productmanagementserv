@@ -25,4 +25,12 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("SELECT COUNT(DISTINCT o) FROM Order o JOIN o.items i WHERE i.merchantId = :merchantId AND o.status = :status")
     Long countByMerchantIdAndStatus(@Param("merchantId") Integer merchantId, @Param("status") String status);
+
+    @Query("SELECT o FROM Order o WHERE o.customerId = " +
+           "(SELECT c.id FROM Customer c WHERE c.phone = :phone) ORDER BY o.createdAt DESC")
+    List<Order> findByCustomerPhone(@Param("phone") String phone);
+
+    @Query("SELECT o FROM Order o WHERE o.customerId = " +
+           "(SELECT c.id FROM Customer c WHERE c.phone = :phone) AND o.status = :status ORDER BY o.createdAt DESC")
+    List<Order> findByCustomerPhoneAndStatus(@Param("phone") String phone, @Param("status") String status);
 }

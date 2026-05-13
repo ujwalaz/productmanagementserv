@@ -42,7 +42,7 @@ public class AuthService {
     }
     
     public String generateToken(Integer merchantId) {
-        return jwtUtil.generate(merchantId);
+        return jwtUtil.generateMerchantToken(merchantId);
     }
     
     public Merchant getMerchantDetails(Integer merchantId) {

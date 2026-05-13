@@ -25,6 +25,12 @@ public class ProductService {
         products.forEach(this::populateQuantity);
         return products;
     }
+
+    public List<Product> getAllActiveProducts() {
+        List<Product> products = productRepository.findAllByIsActiveTrue();
+        products.forEach(this::populateQuantity);
+        return products;
+    }
     
     public Product getProductById(Integer merchantId, Integer productId) {
         Product product = productRepository.findByIdAndMerchantId(productId, merchantId)

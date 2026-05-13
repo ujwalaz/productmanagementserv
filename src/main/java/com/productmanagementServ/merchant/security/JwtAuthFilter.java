@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -32,13 +33,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String token = extractTokenFromRequest(request);
             
             if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
-                Integer merchantId = jwtUtil.getMerchantIdFromToken(token);
-                
+                String role = jwtUtil.getRole(token);
+                String principal;
+                String authority;
+
+                if ("MERCHANT".equals(role)) {
+                    principal = jwtUtil.getMerchantId(token).toString();
+                    authority = "ROLE_MERCHANT";
+                } else if ("CUSTOMER".equals(role)) {
+                    principal = jwtUtil.getPhone(token);
+                    authority = "ROLE_CUSTOMER";
+                } else {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 UsernamePasswordAuthenticationToken authentication = 
                         new UsernamePasswordAuthenticationToken(
-                                merchantId.toString(), 
+                                principal, 
                                 null, 
-                                Collections.emptyList()
+                                Collections.singletonList(new SimpleGrantedAuthority(authority))
                         );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 
