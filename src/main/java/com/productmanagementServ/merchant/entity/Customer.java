@@ -24,7 +24,7 @@ public class Customer {
     @Column(name = "phone", nullable = false, unique = true, columnDefinition = "NVARCHAR(20)")
     private String phone;
 
-    @Column(name = "email", unique = true, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "email", columnDefinition = "NVARCHAR(255)")
     private String email;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "DATETIMEOFFSET")

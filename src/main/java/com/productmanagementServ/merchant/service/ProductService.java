@@ -51,13 +51,17 @@ public class ProductService {
         if (product.getSellingPrice() == null) {
             product.setSellingPrice(product.getMrp());
         }
+        if (product.getSku() != null && product.getSku().isBlank()) {
+            product.setSku(null);
+        }
 
         Product savedProduct = productRepository.save(product);
         
         // Create inventory entry
         Inventory inventory = new Inventory();
         inventory.setProductId(savedProduct.getId());
-        inventory.setQuantityOnHand(0);
+        inventory.setMerchantId(savedProduct.getMerchantId());
+        inventory.setQuantityOnHand(product.getQuantity() != null ? product.getQuantity() : 0);
         inventory.setLowStockThreshold(5);
         inventoryRepository.save(inventory);
         
@@ -76,7 +80,7 @@ public class ProductService {
             product.setDescription(productUpdate.getDescription());
         }
         if (productUpdate.getSku() != null) {
-            product.setSku(productUpdate.getSku());
+            product.setSku(productUpdate.getSku().isBlank() ? null : productUpdate.getSku());
         }
         if (productUpdate.getCategoryId() != null) {
             product.setCategoryId(productUpdate.getCategoryId());
@@ -89,6 +93,9 @@ public class ProductService {
         }
         if (productUpdate.getImageUrl() != null) {
             product.setImageUrl(productUpdate.getImageUrl());
+        }
+        if (productUpdate.getImageUrlBack() != null) {
+            product.setImageUrlBack(productUpdate.getImageUrlBack());
         }
         
         return productRepository.save(product);

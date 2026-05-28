@@ -42,6 +42,9 @@ public class Product {
     
     @Column(name = "image_url", columnDefinition = "NVARCHAR(MAX)")
     private String imageUrl;
+
+    @Column(name = "image_url_back", columnDefinition = "NVARCHAR(MAX)")
+    private String imageUrlBack;
     
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;

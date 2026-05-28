@@ -14,16 +14,16 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     List<Order> findByStatusOrderByCreatedAtDesc(String status);
 
-    @Query("SELECT o FROM Order o JOIN o.items i WHERE i.merchantId = :merchantId ORDER BY o.createdAt DESC")
+    @Query("SELECT o FROM Order o WHERE EXISTS (SELECT i FROM OrderItem i WHERE i.order = o AND i.merchantId = :merchantId) ORDER BY o.createdAt DESC")
     List<Order> findByMerchantId(@Param("merchantId") Integer merchantId);
 
-    @Query("SELECT o FROM Order o JOIN o.items i WHERE i.merchantId = :merchantId AND o.status = :status ORDER BY o.createdAt DESC")
+    @Query("SELECT o FROM Order o WHERE EXISTS (SELECT i FROM OrderItem i WHERE i.order = o AND i.merchantId = :merchantId) AND o.status = :status ORDER BY o.createdAt DESC")
     List<Order> findByMerchantIdAndStatus(@Param("merchantId") Integer merchantId, @Param("status") String status);
 
-    @Query("SELECT COUNT(DISTINCT o) FROM Order o JOIN o.items i WHERE i.merchantId = :merchantId")
+    @Query("SELECT COUNT(o) FROM Order o WHERE EXISTS (SELECT i FROM OrderItem i WHERE i.order = o AND i.merchantId = :merchantId)")
     Long countByMerchantId(@Param("merchantId") Integer merchantId);
 
-    @Query("SELECT COUNT(DISTINCT o) FROM Order o JOIN o.items i WHERE i.merchantId = :merchantId AND o.status = :status")
+    @Query("SELECT COUNT(o) FROM Order o WHERE EXISTS (SELECT i FROM OrderItem i WHERE i.order = o AND i.merchantId = :merchantId) AND o.status = :status")
     Long countByMerchantIdAndStatus(@Param("merchantId") Integer merchantId, @Param("status") String status);
 
     @Query("SELECT o FROM Order o WHERE o.customerId = " +

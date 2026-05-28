@@ -21,6 +21,9 @@ public class Inventory {
     @Column(name = "product_id", nullable = false, unique = true)
     private Integer productId;
 
+    @Column(name = "merchant_id", nullable = false)
+    private Integer merchantId;
+
     @Column(name = "quantity_on_hand", nullable = false)
     private Integer quantityOnHand = 0;
     

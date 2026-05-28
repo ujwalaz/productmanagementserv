@@ -1,5 +1,6 @@
 package com.productmanagementServ.merchant.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,11 @@ public class OrderItem {
     
     @Column(name = "subtotal", precision = 12, scale = 2, insertable = false, updatable = false)
     private BigDecimal subtotal;
+
+    @Transient
+    private String productName;
     
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
