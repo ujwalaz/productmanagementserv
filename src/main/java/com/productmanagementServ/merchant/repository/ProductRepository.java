@@ -13,6 +13,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findByMerchantIdAndIsActiveTrue(Integer merchantId);
 
+    List<Product> findByMerchantId(Integer merchantId);
+
     List<Product> findAllByIsActiveTrue();
 
     Optional<Product> findByIdAndMerchantId(Integer id, Integer merchantId);

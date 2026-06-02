@@ -33,6 +33,9 @@ public class Inventory {
     @Column(name = "out_of_stock_alert_at", columnDefinition = "DATETIMEOFFSET")
     private OffsetDateTime outOfStockAlertAt;
 
+    @Transient
+    private String productName;
+
     @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIMEOFFSET")
     private OffsetDateTime updatedAt;
 
