@@ -1,0 +1,38 @@
+package com.productmanagementServ.merchant.controller;
+
+import com.productmanagementServ.merchant.security.JwtUtil;
+import com.productmanagementServ.merchant.service.NotificationService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+@RestController
+@RequestMapping("/api/notifications")
+public class NotificationController {
+
+    private final NotificationService notificationService;
+    private final JwtUtil jwtUtil;
+
+    public NotificationController(NotificationService notificationService, JwtUtil jwtUtil) {
+        this.notificationService = notificationService;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @GetMapping("/merchant")
+    public SseEmitter merchantStream(@RequestParam String token) {
+        if (!jwtUtil.validateToken(token) || !"MERCHANT".equals(jwtUtil.getRole(token))) {
+            throw new RuntimeException("Unauthorized");
+        }
+        return notificationService.subscribeMerchant(jwtUtil.getMerchantId(token));
+    }
+
+    @GetMapping("/customer")
+    public SseEmitter customerStream(@RequestParam String token) {
+        if (!jwtUtil.validateToken(token) || !"CUSTOMER".equals(jwtUtil.getRole(token))) {
+            throw new RuntimeException("Unauthorized");
+        }
+        return notificationService.subscribeCustomer(jwtUtil.getPhone(token));
+    }
+}
