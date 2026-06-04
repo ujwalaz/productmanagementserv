@@ -90,6 +90,12 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-ai-vision-imageanalysis</artifactId>
+            <version>1.0.0-beta.2</version> <!-- Check for the latest stable release version -->
+        </dependency>
+
     </dependencies>
     
     <build>
