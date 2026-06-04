@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,12 +29,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final NotificationService notificationService;
 
     public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository,
-                        ProductRepository productRepository) {
+                        ProductRepository productRepository, NotificationService notificationService) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
+        this.notificationService = notificationService;
     }
 
     public List<Order> getOrdersByMerchant(Integer merchantId) {
@@ -93,7 +96,18 @@ public class OrderService {
             throw new RuntimeException("Invalid status transition from '" + order.getStatus() + "' to '" + newStatus + "'");
         }
         order.setStatus(newStatus);
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+
+        // Notify the customer about the status change
+        customerRepository.findById(order.getCustomerId()).ifPresent(customer -> {
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("type", "ORDER_UPDATE");
+            payload.put("orderId", orderId);
+            payload.put("status", newStatus);
+            notificationService.notifyCustomer(customer.getPhone(), payload);
+        });
+
+        return saved;
     }
 
     @Transactional
@@ -103,7 +117,18 @@ public class OrderService {
             throw new RuntimeException("Cannot cancel an order with status: " + order.getStatus());
         }
         order.setStatus("cancelled");
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+
+        // Notify the customer about cancellation
+        customerRepository.findById(order.getCustomerId()).ifPresent(customer -> {
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("type", "ORDER_UPDATE");
+            payload.put("orderId", orderId);
+            payload.put("status", "cancelled");
+            notificationService.notifyCustomer(customer.getPhone(), payload);
+        });
+
+        return saved;
     }
 
     public Long countOrders(Integer merchantId) {
