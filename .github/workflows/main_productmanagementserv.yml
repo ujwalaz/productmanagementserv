@@ -25,6 +25,8 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
+        env:
+          JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
         run: mvn clean install
 
       - name: Upload artifact for deployment job
