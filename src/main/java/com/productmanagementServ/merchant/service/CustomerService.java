@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CustomerService {
@@ -21,19 +23,22 @@ public class CustomerService {
     private final InventoryRepository inventoryRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final NotificationService notificationService;
 
     public CustomerService(CustomerRepository customerRepository,
                            CustomerAddressRepository customerAddressRepository,
                            ProductRepository productRepository,
                            InventoryRepository inventoryRepository,
                            OrderRepository orderRepository,
-                           OrderItemRepository orderItemRepository) {
+                           OrderItemRepository orderItemRepository,
+                           NotificationService notificationService) {
         this.customerRepository = customerRepository;
         this.customerAddressRepository = customerAddressRepository;
         this.productRepository = productRepository;
         this.inventoryRepository = inventoryRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
+        this.notificationService = notificationService;
     }
 
     public Customer upsertCustomer(String phone, String name) {
@@ -111,6 +116,18 @@ public class CustomerService {
 
             inventory.setQuantityOnHand(inventory.getQuantityOnHand() - itemReq.getQuantity());
             inventoryRepository.save(inventory);
+        }
+
+        // Notify the merchant about the new order
+        if (!products.isEmpty()) {
+            Integer merchantId = products.get(0).getMerchantId();
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("type", "NEW_ORDER");
+            payload.put("orderId", savedOrder.getId());
+            payload.put("customerName", customer.getName());
+            payload.put("total", totalAmount);
+            payload.put("itemCount", itemRequests.size());
+            notificationService.notifyMerchant(merchantId, payload);
         }
 
         return savedOrder;
