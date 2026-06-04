@@ -95,11 +95,6 @@
             <artifactId>azure-ai-vision-imageanalysis</artifactId>
             <version>1.0.0-beta.2</version> <!-- Check for the latest stable release version -->
         </dependency>
-        <dependency>
-            <groupId>com.github.ulisesbocchio</groupId>
-            <artifactId>jasypt-spring-boot-starter</artifactId>
-            <version>4.0.4</version>
-        </dependency>
 
     </dependencies>
     
