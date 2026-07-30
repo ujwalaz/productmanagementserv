@@ -31,9 +31,12 @@ public class Product {
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
     
-    @Column(name = "sku", columnDefinition = "NVARCHAR(100)")
-    private String sku;
-    
+    @Column(name = "measurement_unit", columnDefinition = "NVARCHAR(10)")
+    private String measurementUnit;
+
+    @Column(name = "unit_size")
+    private Integer unitSize;
+
     @Column(name = "mrp", precision = 10, scale = 2, nullable = false)
     private BigDecimal mrp;
     

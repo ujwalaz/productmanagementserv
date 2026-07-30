@@ -23,6 +23,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
            "AND LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Product> searchByMerchantId(@Param("merchantId") Integer merchantId,
                                       @Param("searchTerm") String searchTerm);
-    
-    boolean existsBySkuAndMerchantId(String sku, Integer merchantId);
 }

@@ -51,9 +51,6 @@ public class ProductService {
         if (product.getSellingPrice() == null) {
             product.setSellingPrice(product.getMrp());
         }
-        if (product.getSku() != null && product.getSku().isBlank()) {
-            product.setSku(null);
-        }
 
         Product savedProduct = productRepository.save(product);
         
@@ -79,8 +76,11 @@ public class ProductService {
         if (productUpdate.getDescription() != null) {
             product.setDescription(productUpdate.getDescription());
         }
-        if (productUpdate.getSku() != null) {
-            product.setSku(productUpdate.getSku().isBlank() ? null : productUpdate.getSku());
+        if (productUpdate.getMeasurementUnit() != null) {
+            product.setMeasurementUnit(productUpdate.getMeasurementUnit().isBlank() ? null : productUpdate.getMeasurementUnit());
+        }
+        if (productUpdate.getUnitSize() != null) {
+            product.setUnitSize(productUpdate.getUnitSize());
         }
         if (productUpdate.getCategoryId() != null) {
             product.setCategoryId(productUpdate.getCategoryId());
